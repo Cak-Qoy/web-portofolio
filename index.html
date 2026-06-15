@@ -494,6 +494,120 @@
     .contact-form { padding: 24px 18px; }
     .skills-grid { grid-template-columns: 1fr 1fr; }
   }
+
+  /* ================= WA PREMIUM ================= */
+
+#waWidget{
+
+    position:fixed;
+
+    right:30px;
+    bottom:30px;
+
+    z-index:999;
+}
+
+#waTooltip{
+
+    background:#ffffff;
+
+    border:1px solid rgba(215,176,74,.3);
+
+    color:#F2F0EB;
+
+    padding:14px 18px;
+
+    border-radius:12px;
+
+    margin-bottom:12px;
+
+    width:220px;
+
+    line-height:1.6;
+
+    opacity:0;
+
+    transform:translateY(15px);
+
+    transition:.4s ease;
+}
+
+#waTooltip.show{
+
+    opacity:1;
+
+    transform:translateY(0);
+}
+
+#chatButton{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    background:#1D5FD4;
+
+    color:#ffffff;
+
+    padding:16px 24px;
+
+    border-radius:999px;
+
+    font-weight:600;
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.35);
+
+    transition:.3s ease;
+}
+
+#chatButton:hover{
+    transform:translateY(-4px);
+}
+
+.wa-icon{
+    font-size:1.2rem;
+}
+
+.wa-text{
+    white-space:nowrap;
+}
+
+/* ==========================================
+   MOBILE FLOATING CHAT
+========================================== */
+
+@media (max-width: 768px){
+
+    #waTooltip{
+        display:none;
+    }
+
+    #chatButton{
+
+        width:60px;
+        height:60px;
+
+        padding:0;
+
+        border-radius:50%;
+
+        justify-content:center;
+
+        gap:0;
+    }
+
+    .wa-text{
+        display:none;
+    }
+
+    .wa-icon{
+        font-size:1.5rem;
+    }
+
+}
 </style>
 </head>
 <body>
@@ -809,32 +923,56 @@
       <h2 class="section-title">Mari <span>Bekerja</span> Sama</h2>
       <p style="color:var(--muted);margin-top:10px">Punya proyek atau pertanyaan? Saya siap membantu!</p>
     </div>
-    <div class="contact-form reveal" style="transition-delay:.1s">
+    <form id="contactForm" class="contact-form reveal" style="transition-delay:.1s">
       <div class="form-row">
         <div class="form-group">
           <label>Nama Lengkap</label>
-          <input type="text" id="nama" placeholder="Abdul Qoyyum"/>
+          <input type="text" id="nama" required placeholder="Abdul Qoyyum"/>
         </div>
         <div class="form-group">
-          <label>Email</label>
-          <input type="email" id="email" placeholder="abdulqoyyumrohmanu@email.com"/>
+          <label>No Whatsapp</label>
+          <input type="text" id="noWA" required placeholder="085646265463"/>
         </div>
       </div>
       <div class="form-group">
         <label>Subjek</label>
-        <input type="text" id="subjek" placeholder="Tentang proyek saya..."/>
+        <input type="text" id="subjek" required placeholder="Tentang proyek saya..."/>
       </div>
       <div class="form-group">
         <label>Pesan</label>
-        <textarea id="pesan" placeholder="Ceritakan proyek atau kebutuhan Anda..."></textarea>
+        <textarea id="pesan" required placeholder="Ceritakan proyek atau kebutuhan Anda..."></textarea>
       </div>
-      <button class="form-submit" onclick="submitForm()">Kirim Pesan ✈</button>
+      <button type="submit" class="form-submit">Kirim Pesan ✈</button>
       <div class="toast" id="toast">
         ✅ Pesan berhasil dikirim! Saya akan segera menghubungi Anda.
       </div>
-    </div>
+    </form>
   </div>
 </section>
+
+<!-- Floating Message -->
+ <div id="waWidget">
+
+    <!-- <div id="waTooltip">
+
+        Butuh bantuan hukum?
+        Kami siap membantu.
+
+    </div> -->
+
+    <button id="chatButton">
+
+        <span class="wa-icon">
+            💬
+        </span>
+
+        <span class="wa-text">
+            Konsultasi Sekarang
+        </span>
+
+    </button>
+
+</div>
 
 <!-- FOOTER -->
 <footer>
@@ -952,6 +1090,114 @@
     document.getElementById('pesan').value = '';
     setTimeout(() => toast.classList.remove('show'), 5000);
   }
+
+  /* ==========================================
+   FLOATING CHAT BUTTON
+========================================== */
+
+const chatButton = document.getElementById('chatButton');
+
+if (chatButton) {
+
+    chatButton.addEventListener("click", () => {
+
+        /*
+         * Ganti nomor WhatsApp di bawah ini
+         * Format: 628xxxxxxxxxx
+         */
+
+        const phone = "6285646265463";
+
+        const message = encodeURIComponent(
+            "Halo Cak Qoy, Saya tertarik dengan beberapa project anda, dan saya ingin meminta waktunya sebentar untuk membicarakan kebutuhan saya."
+        );
+
+        window.open(
+            `https://wa.me/${phone}?text=${message}`,
+            "_blank"
+        );
+
+    });
+
+}
+
+/* ==========================================
+   GOOGLE SPREADSHEET FORM
+========================================== */
+
+const contactForm = document.getElementById("contactForm");
+
+if (contactForm) {
+
+    contactForm.addEventListener("submit", async function (e) {
+
+        e.preventDefault();
+
+        const submitBtn = this.querySelector("button");
+
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Mengirim...";
+
+        const formData = new FormData();
+
+        formData.append(
+            "nama",
+            document.getElementById("nama").value
+        );
+
+        formData.append(
+            "noWA",
+            document.getElementById("noWA").value
+        );
+
+        formData.append(
+            "subjek",
+            document.getElementById("subjek").value
+        );
+
+        formData.append(
+            "pesan",
+            document.getElementById("pesan").value
+        );
+
+        try {
+
+            const response = await fetch(
+                "https://script.google.com/macros/s/AKfycbxKpC7QEl8okP7u_qZSvwiILR1RxtCSE6Zoxwx2FCR-NkO_kPvu0zYzpjX_iy3JSpQ2jg/exec",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+            const result = await response.text();
+
+            if (result === "success") {
+
+                document.getElementById("toast").innerText = "✓ Pesan berhasil dikirim.";
+
+                contactForm.reset();
+
+            } else {
+
+                document.getElementById("toast").innerText = "✕ Gagal mengirim pesan.";
+
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert("Terjadi kesalahan.");
+
+        }
+
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Kirim Pertanyaan";
+
+    });
+
+}
 </script>
 </body>
 </html>
