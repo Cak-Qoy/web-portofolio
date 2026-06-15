@@ -943,9 +943,9 @@
         <textarea id="pesan" required placeholder="Ceritakan proyek atau kebutuhan Anda..."></textarea>
       </div>
       <button type="submit" class="form-submit">Kirim Pesan ✈</button>
-      <div class="toast" id="toast">
-        ✅ Pesan berhasil dikirim! Saya akan segera menghubungi Anda.
-      </div>
+      <p id="formStatus" class="text-sm text-white/60"></p>
+      <!-- <div class="toast" id="toast">
+      </div> -->
     </form>
   </div>
 </section>
@@ -1163,7 +1163,7 @@ if (contactForm) {
         try {
 
             const response = await fetch(
-                "https://script.google.com/macros/s/AKfycbxKpC7QEl8okP7u_qZSvwiILR1RxtCSE6Zoxwx2FCR-NkO_kPvu0zYzpjX_iy3JSpQ2jg/exec",
+                "https://script.google.com/macros/s/AKfycbyioqQB_4cpDKwpVKUgcK0SY_-rItzwlhzfT_WIZgI8TMYCzp9TMSforufYFyLHrOkG9w/exec",
                 {
                     method: "POST",
                     body: formData
@@ -1174,13 +1174,13 @@ if (contactForm) {
 
             if (result === "success") {
 
-                document.getElementById("toast").innerText = "✓ Pesan berhasil dikirim.";
+                document.getElementById("formStatus").innerText = "✓ Pesan berhasil dikirim.";
 
                 contactForm.reset();
 
             } else {
 
-                document.getElementById("toast").innerText = "✕ Gagal mengirim pesan.";
+                document.getElementById("formStatus").innerText = "✕ Gagal mengirim pesan.";
 
             }
 
